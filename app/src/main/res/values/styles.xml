@@ -49,4 +49,20 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/bg_button_ghost</item>
     </style>
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowBackground">@color/splash_bg</item>
+        <item name="android:windowDisablePreview">false</item>
+    </style>
+
+    <style name="AppTheme.Search" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/search_bg</item>
+        <item name="android:colorAccent">@color/search_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:statusBarColor">@color/search_bg</item>
+        <item name="android:navigationBarColor">@color/search_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
 </resources>

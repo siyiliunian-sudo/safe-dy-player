@@ -1,9 +1,12 @@
 package com.xiazongji.littlestar;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +19,10 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,10 +37,11 @@ import java.util.List;
 import java.util.Random;
 
 public final class MainActivity extends Activity {
+    public static final String EXTRA_START_VIDEO_ID = "start_video_id";
+    public static final String EXTRA_FROM_SEARCH = "from_search";
     private static final int REQUEST_MANAGE = 201;
     private static final String PREFS = "little_star_settings";
     private static final String KEY_CROP = "crop_fill";
-    private static final String KEY_HINT = "feed_hint_seen";
     private static final String KEY_WATCH_LIMIT = "watch_limit_minutes";
     private static final int DEFAULT_WATCH_LIMIT_MINUTES = 20;
     private static final String KEY_LAST_START = "last_start_video";
@@ -47,22 +54,39 @@ public final class MainActivity extends Activity {
     private View bottomInfo;
     private View bottomScrim;
     private View topScrim;
-    private View swipeHint;
     private TextView captionTitle;
+    private TextView authorName;
+    private TextView musicText;
     private View restOverlay;
     private View progressPanel;
     private SeekBar progressSeek;
+    private ImageView likeButton;
+    private ImageView starButton;
+    private View feedTopBar;
+    private View searchTopBar;
+    private View bottomTabBar;
+    private View searchBottomBars;
+    private View bottomStack;
+    private View fullscreenPill;
+    private View discButton;
+    private View discLabel;
+    private View listenPill;
+    private ImageView disc;
+    private boolean fromSearch;
+    private String requestedVideoId;
     private boolean seeking;
     private final Handler progressHandler = new Handler(Looper.getMainLooper());
     private final Runnable progressHide = this::hideProgressPanel;
     private final Runnable progressTick = this::updateProgress;
     private String lastVideoId;
-    private boolean hintShown;
     private boolean restMode;
     private long watchedMs;
     private final Handler sessionHandler = new Handler(Looper.getMainLooper());
     private final Runnable watchTick = this::onWatchTick;
     private long watchLimitMs;
+    private ObjectAnimator discAnimator;
+    private int bottomInset;
+    private int topInset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +98,8 @@ public final class MainActivity extends Activity {
         }
         setContentView(R.layout.activity_main);
         configureWindow();
+        requestedVideoId = getIntent().getStringExtra(EXTRA_START_VIDEO_ID);
+        fromSearch = getIntent().getBooleanExtra(EXTRA_FROM_SEARCH, false);
 
         pager = findViewById(R.id.videoPager);
         emptyState = findViewById(R.id.emptyState);
@@ -81,14 +107,33 @@ public final class MainActivity extends Activity {
         bottomInfo = findViewById(R.id.bottomInfo);
         bottomScrim = findViewById(R.id.bottomScrim);
         topScrim = findViewById(R.id.topScrim);
-        swipeHint = findViewById(R.id.swipeHint);
         captionTitle = findViewById(R.id.captionTitle);
+        authorName = findViewById(R.id.authorName);
+        musicText = findViewById(R.id.musicText);
         restOverlay = findViewById(R.id.restOverlay);
         watchLimitMs = loadWatchLimitMs();
         progressPanel = findViewById(R.id.progressPanel);
         progressSeek = findViewById(R.id.progressSeek);
+        likeButton = findViewById(R.id.likeButton);
+        starButton = findViewById(R.id.starButton);
+        feedTopBar = findViewById(R.id.feedTopBar);
+        searchTopBar = findViewById(R.id.searchTopBar);
+        bottomTabBar = findViewById(R.id.bottomTabBar);
+        searchBottomBars = findViewById(R.id.searchBottomBars);
+        bottomStack = findViewById(R.id.bottomStack);
+        fullscreenPill = findViewById(R.id.fullscreenPill);
+        discButton = findViewById(R.id.discButton);
+        discLabel = findViewById(R.id.discLabel);
+        listenPill = findViewById(R.id.listenPill);
+        disc = findViewById(R.id.disc);
+
+        authorName.setText(getString(R.string.feed_handle)
+                + getString(R.string.feed_author_suffix));
+        setupChrome();
+        setupReactions();
         setupTapGestures();
         setupSeekBar();
+        setupNavigation();
 
         pager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
         pager.setOffscreenPageLimit(1);
@@ -105,16 +150,6 @@ public final class MainActivity extends Activity {
                 }
             }
         });
-
-        View manageButton = findViewById(R.id.manageButton);
-        manageButton.setOnLongClickListener(v -> {
-            openManage();
-            return true;
-        });
-        manageButton.setOnClickListener(v -> Toast.makeText(this,
-                R.string.manage_tip, Toast.LENGTH_SHORT).show());
-
-        findViewById(R.id.emptyAddButton).setOnClickListener(v -> openManage());
 
         applyInsets();
         rebuildFeed();
@@ -133,53 +168,143 @@ public final class MainActivity extends Activity {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.setNavigationBarContrastEnforced(false);
+            window.setStatusBarContrastEnforced(false);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false);
+            WindowInsetsController controller = window.getInsetsController();
+            if (controller != null) {
+                // 深色视频背景：状态栏使用白色图标
+                controller.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                                | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+            }
         } else {
             //noinspection deprecation
             window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         }
-        hideSystemBars();
     }
 
-    private void hideSystemBars() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowInsetsController controller = getWindow().getInsetsController();
-            if (controller != null) {
-                controller.hide(WindowInsets.Type.statusBars()
-                        | WindowInsets.Type.navigationBars());
-                controller.setSystemBarsBehavior(
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            }
-        } else {
-            //noinspection deprecation
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    private void setupChrome() {
+        feedTopBar.setVisibility(fromSearch ? View.GONE : View.VISIBLE);
+        searchTopBar.setVisibility(fromSearch ? View.VISIBLE : View.GONE);
+        bottomTabBar.setVisibility(fromSearch ? View.GONE : View.VISIBLE);
+        searchBottomBars.setVisibility(fromSearch ? View.VISIBLE : View.GONE);
+        fullscreenPill.setVisibility(fromSearch ? View.GONE : View.VISIBLE);
+        discButton.setVisibility(fromSearch ? View.GONE : View.VISIBLE);
+        discLabel.setVisibility(fromSearch ? View.GONE : View.VISIBLE);
+        listenPill.setVisibility(fromSearch ? View.VISIBLE : View.GONE);
+        if (discAnimator != null) {
+            discAnimator.cancel();
+            discAnimator = null;
         }
+        if (!fromSearch) {
+            disc.setPivotX(dp(23));
+            disc.setPivotY(dp(23));
+            discAnimator = ObjectAnimator.ofFloat(disc, "rotation", 0f, 360f);
+            discAnimator.setDuration(9000L);
+            discAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            discAnimator.setInterpolator(new LinearInterpolator());
+            discAnimator.start();
+        }
+        if (rootView() != null) {
+            applyInsets();
+        }
+    }
+
+    private View rootView() {
+        return findViewById(R.id.root);
+    }
+
+    private void setupNavigation() {
+        findViewById(R.id.searchButton).setOnClickListener(v -> openSearch());
+        findViewById(R.id.searchTopBox).setOnClickListener(v -> openSearch());
+        findViewById(R.id.searchTopAction).setOnClickListener(v -> openSearch());
+        findViewById(R.id.searchTopBack).setOnClickListener(v -> openSearch());
+
+        View menu = findViewById(R.id.menuButton);
+        menu.setOnClickListener(v -> Toast.makeText(this, R.string.local_only_tip,
+                Toast.LENGTH_SHORT).show());
+        menu.setOnLongClickListener(v -> {
+            openManage();
+            return true;
+        });
+
+        View navMe = findViewById(R.id.navMe);
+        navMe.setOnClickListener(v -> Toast.makeText(this, R.string.manage_hold_tip,
+                Toast.LENGTH_SHORT).show());
+        navMe.setOnLongClickListener(v -> {
+            openManage();
+            return true;
+        });
+        View.OnClickListener localOnly = v -> Toast.makeText(this, R.string.local_only_tip,
+                Toast.LENGTH_SHORT).show();
+        findViewById(R.id.navHome).setOnClickListener(localOnly);
+        findViewById(R.id.navFriends).setOnClickListener(localOnly);
+        findViewById(R.id.navMessages).setOnClickListener(localOnly);
+        findViewById(R.id.navCreate).setOnClickListener(localOnly);
+        findViewById(R.id.discButton).setOnClickListener(localOnly);
+        findViewById(R.id.listenPill).setOnClickListener(localOnly);
+        findViewById(R.id.commentBar).setOnClickListener(localOnly);
+        findViewById(R.id.collectionBar).setOnClickListener(localOnly);
+        findViewById(R.id.collectionNext).setOnClickListener(v -> {
+            if (adapter != null && pager != null) {
+                pager.setCurrentItem(pager.getCurrentItem() + 1, true);
+            }
+        });
+
+        fullscreenPill.setOnClickListener(v -> {
+            boolean crop = !cropToFill();
+            prefs().edit().putBoolean(KEY_CROP, crop).apply();
+            if (adapter != null) {
+                adapter.setCropToFill(crop);
+            }
+            Toast.makeText(this, crop ? R.string.toast_fullscreen_on : R.string.toast_fullscreen_off,
+                    Toast.LENGTH_SHORT).show();
+        });
+
+        setupTopTabs();
+    }
+
+    private void setupTopTabs() {
+        int[] tabs = {R.id.tabHot, R.id.tabLive, R.id.tabCity, R.id.tabGroup,
+                R.id.tabFollow, R.id.tabShop, R.id.tabRecommend};
+        int[] lines = {R.id.tabHotLine, R.id.tabLiveLine, R.id.tabCityLine,
+                R.id.tabGroupLine, R.id.tabFollowLine, R.id.tabShopLine,
+                R.id.tabRecommendLine};
+        for (int i = 0; i < tabs.length; i++) {
+            final int index = i;
+            findViewById(tabs[i]).setOnClickListener(v -> selectTopTab(tabs, lines, index));
+        }
+    }
+
+    private void selectTopTab(int[] tabs, int[] lines, int selected) {
+        for (int i = 0; i < tabs.length; i++) {
+            LinearLayout tab = findViewById(tabs[i]);
+            TextView label = (TextView) tab.getChildAt(0);
+            boolean active = i == selected;
+            label.setTypeface(active ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            label.setTextColor(active ? 0xFFFFFFFF : 0xD9FFFFFF);
+            findViewById(lines[i]).setVisibility(active ? View.VISIBLE : View.INVISIBLE);
+        }
+        if (selected != 6) {
+            Toast.makeText(this, R.string.local_only_tip, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openSearch() {
+        startActivity(new Intent(this, SearchActivity.class));
     }
 
     private void applyInsets() {
-        View root = findViewById(R.id.root);
-        View topBar = findViewById(R.id.topBar);
-        View bottomInfoView = bottomInfo;
-        View sideRailView = sideRail;
-        View hintView = swipeHint;
-        final int baseTop = dp(10);
-        final int baseBottom = dp(26);
-        final int baseSideBottom = dp(92);
-        final int baseHintBottom = dp(170);
+        View root = rootView();
+        if (root == null) {
+            return;
+        }
         root.setOnApplyWindowInsetsListener((view, insets) -> {
             int top;
             int bottom;
@@ -196,22 +321,36 @@ public final class MainActivity extends Activity {
                 //noinspection deprecation
                 bottom = insets.getSystemWindowInsetBottom();
             }
-            topBar.setPadding(dp(16), baseTop + top, dp(16), 0);
-            bottomInfoView.setPadding(dp(16), dp(8), dp(6), baseBottom + bottom);
+            topInset = top;
+            bottomInset = bottom;
+            feedTopBar.setPadding(dp(12), dp(9) + top, dp(14), dp(4));
+            searchTopBar.setPadding(dp(6), dp(7) + top, dp(14), dp(7));
+
+            ViewGroup.LayoutParams tabParams = bottomTabBar.getLayoutParams();
+            tabParams.height = dp(54) + bottom;
+            bottomTabBar.setLayoutParams(tabParams);
+            bottomTabBar.setPadding(0, dp(5), 0, bottom);
+            searchBottomBars.setPadding(0, 0, 0, bottom);
+
+            int barsHeight = fromSearch ? dp(84) : dp(54);
+            bottomStack.setPadding(0, 0, 0, bottom + barsHeight + dp(4));
+
             FrameLayout.LayoutParams railParams =
-                    (FrameLayout.LayoutParams) sideRailView.getLayoutParams();
-            railParams.bottomMargin = baseSideBottom + bottom;
-            sideRailView.setLayoutParams(railParams);
-            FrameLayout.LayoutParams hintParams =
-                    (FrameLayout.LayoutParams) hintView.getLayoutParams();
-            hintParams.bottomMargin = baseHintBottom + bottom;
-            hintView.setLayoutParams(hintParams);
+                    (FrameLayout.LayoutParams) sideRail.getLayoutParams();
+            railParams.bottomMargin = bottom + (fromSearch ? dp(158) : dp(172));
+            sideRail.setLayoutParams(railParams);
+
             ViewGroup.LayoutParams topParams = topScrim.getLayoutParams();
-            topParams.height = dp(150) + top;
+            topParams.height = dp(180) + top;
             topScrim.setLayoutParams(topParams);
             ViewGroup.LayoutParams bottomParams = bottomScrim.getLayoutParams();
-            bottomParams.height = dp(160) + bottom;
+            bottomParams.height = dp(260) + bottom;
             bottomScrim.setLayoutParams(bottomParams);
+
+            FrameLayout.LayoutParams progressParams =
+                    (FrameLayout.LayoutParams) progressPanel.getLayoutParams();
+            progressParams.bottomMargin = bottom + barsHeight + dp(2);
+            progressPanel.setLayoutParams(progressParams);
             return insets;
         });
         root.requestApplyInsets();
@@ -222,7 +361,7 @@ public final class MainActivity extends Activity {
     }
 
     private void rebuildFeed() {
-        String keepId = lastVideoId;
+        String keepId = requestedVideoId != null ? requestedVideoId : lastVideoId;
         if (adapter != null) {
             adapter.releaseAll();
         }
@@ -234,9 +373,8 @@ public final class MainActivity extends Activity {
             emptyState.setVisibility(View.VISIBLE);
             pager.setVisibility(View.GONE);
             sideRail.setVisibility(View.GONE);
-            bottomInfo.setVisibility(View.GONE);
+            bottomStack.setVisibility(View.GONE);
             bottomScrim.setVisibility(View.GONE);
-            swipeHint.setVisibility(View.GONE);
             return;
         }
 
@@ -254,6 +392,9 @@ public final class MainActivity extends Activity {
         }
         emptyState.setVisibility(View.GONE);
         pager.setVisibility(View.VISIBLE);
+        sideRail.setVisibility(View.VISIBLE);
+        bottomStack.setVisibility(View.VISIBLE);
+        bottomScrim.setVisibility(View.VISIBLE);
         adapter = new VideoPagerAdapter(this, videos, cropToFill(), findViewById(R.id.playerView), findViewById(R.id.transitionView), this::onVideoEnded);
         if (restMode) {
             adapter.setPlaybackBlocked(true);
@@ -268,10 +409,8 @@ public final class MainActivity extends Activity {
         }
         adapter.setActivePosition(startPosition);
         lastVideoId = videos.get(target).id;
+        requestedVideoId = null;
         updateChrome(target);
-        if (!prefs().getBoolean(KEY_HINT, false)) {
-            showSwipeHint();
-        }
     }
 
     private int chooseRandomStart() {
@@ -336,24 +475,47 @@ public final class MainActivity extends Activity {
         bottomInfo.setVisibility(View.VISIBLE);
         bottomScrim.setVisibility(View.VISIBLE);
         if (videoIndex >= 0 && videoIndex < videos.size()) {
-            captionTitle.setText(videos.get(videoIndex).title());
+            VideoItem item = videos.get(videoIndex);
+            captionTitle.setText(item.title());
+            musicText.setText(getString(R.string.feed_music));
+            updateReactionUi(item.id);
         }
     }
 
-    private void showSwipeHint() {
-        if (hintShown) {
-            return;
+    private void setupReactions() {
+        likeButton.setOnClickListener(v -> {
+            String id = currentVideoId();
+            if (id == null) return;
+            ReactionStore.toggleLike(this, id);
+            updateReactionUi(id);
+            likeButton.animate().scaleX(1.18f).scaleY(1.18f).setDuration(90L)
+                    .withEndAction(() -> likeButton.animate().scaleX(1f).scaleY(1f)
+                            .setDuration(90L).start()).start();
+        });
+        starButton.setOnClickListener(v -> {
+            String id = currentVideoId();
+            if (id == null) return;
+            ReactionStore.toggleFavorite(this, id);
+            updateReactionUi(id);
+            starButton.animate().scaleX(1.18f).scaleY(1.18f).setDuration(90L)
+                    .withEndAction(() -> starButton.animate().scaleX(1f).scaleY(1f)
+                            .setDuration(90L).start()).start();
+        });
+    }
+
+    private String currentVideoId() {
+        if (videos.isEmpty()) {
+            return null;
         }
-        hintShown = true;
-        prefs().edit().putBoolean(KEY_HINT, true).apply();
-        swipeHint.setVisibility(View.VISIBLE);
-        swipeHint.setAlpha(1f);
-        swipeHint.animate()
-                .alpha(0f)
-                .setStartDelay(3000L)
-                .setDuration(700L)
-                .withEndAction(() -> swipeHint.setVisibility(View.GONE))
-                .start();
+        int index = pager.getCurrentItem() % videos.size();
+        return videos.get(index).id;
+    }
+
+    private void updateReactionUi(String videoId) {
+        boolean liked = ReactionStore.isLiked(this, videoId);
+        boolean favorite = ReactionStore.isFavorite(this, videoId);
+        likeButton.setColorFilter(liked ? 0xFFFE2C55 : 0xFFFFFFFF);
+        starButton.setColorFilter(favorite ? 0xFFFFC43D : 0xFFFFFFFF);
     }
 
     private void setupTapGestures() {
@@ -481,7 +643,7 @@ public final class MainActivity extends Activity {
 
     private void openManage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            findViewById(R.id.manageButton).performHapticFeedback(
+            findViewById(R.id.menuButton).performHapticFeedback(
                     android.view.HapticFeedbackConstants.LONG_PRESS);
         }
         Intent intent = new Intent(this, ManageActivity.class);
@@ -492,6 +654,22 @@ public final class MainActivity extends Activity {
         int count = Math.max(1, videos.size());
         int base = (VideoPagerAdapter.PAGE_COUNT / 2 / count) * count;
         return base + (videoIndex % count);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        boolean nowFromSearch = intent.getBooleanExtra(EXTRA_FROM_SEARCH, false);
+        if (nowFromSearch != fromSearch) {
+            fromSearch = nowFromSearch;
+            setupChrome();
+        }
+        String id = intent.getStringExtra(EXTRA_START_VIDEO_ID);
+        if (id != null) {
+            requestedVideoId = id;
+            rebuildFeed();
+        }
     }
 
     @Override
@@ -511,7 +689,9 @@ public final class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        hideSystemBars();
+        if (discAnimator != null && discAnimator.isPaused()) {
+            discAnimator.resume();
+        }
         applyWatchLimitChange();
         if (adapter != null) {
             adapter.setCropToFill(cropToFill());
@@ -536,6 +716,9 @@ public final class MainActivity extends Activity {
         progressHandler.removeCallbacks(progressTick);
         progressHandler.removeCallbacks(progressHide);
         progressPanel.setVisibility(View.GONE);
+        if (discAnimator != null) {
+            discAnimator.pause();
+        }
         if (adapter != null) {
             adapter.pause();
         }
@@ -543,11 +726,12 @@ public final class MainActivity extends Activity {
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemBars();
+    public void onBackPressed() {
+        if (fromSearch) {
+            startActivity(new Intent(this, SearchActivity.class));
+            return;
         }
+        super.onBackPressed();
     }
 
     private long loadWatchLimitMs() {
@@ -606,9 +790,6 @@ public final class MainActivity extends Activity {
         if (restOverlay != null) {
             restOverlay.setVisibility(View.VISIBLE);
         }
-        if (swipeHint != null) {
-            swipeHint.setVisibility(View.GONE);
-        }
         TextView message = findViewById(R.id.restMessage);
         if (message != null) {
             int minutes = (int) Math.max(1L, watchLimitMs / 60_000L);
@@ -621,6 +802,10 @@ public final class MainActivity extends Activity {
         sessionHandler.removeCallbacks(watchTick);
         progressHandler.removeCallbacks(progressTick);
         progressHandler.removeCallbacks(progressHide);
+        if (discAnimator != null) {
+            discAnimator.cancel();
+            discAnimator = null;
+        }
         if (adapter != null) {
             adapter.releaseAll();
         }

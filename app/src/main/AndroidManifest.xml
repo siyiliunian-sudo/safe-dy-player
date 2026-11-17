@@ -23,6 +23,28 @@
         android:usesCleartextTraffic="false">
 
         <activity
+            android:name=".SplashActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Splash"
+            tools:ignore="LockedOrientationActivity,DiscouragedApi" />
+
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Search"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity,DiscouragedApi" />
+
+        <activity
+            android:name=".VideoGridActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Search"
+            tools:ignore="LockedOrientationActivity,DiscouragedApi" />
+
+        <activity
             android:name=".CrashReportActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -53,7 +75,7 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -67,7 +89,7 @@
             android:icon="@mipmap/ic_launcher_bear"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_bear"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -81,7 +103,7 @@
             android:icon="@mipmap/ic_launcher_star"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_star"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -95,7 +117,7 @@
             android:icon="@mipmap/ic_launcher_rocket"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_rocket"
-            android:targetActivity=".MainActivity">
+            android:targetActivity=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

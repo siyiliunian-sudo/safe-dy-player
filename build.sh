@@ -12,5 +12,5 @@ fi
 
 "$GRADLE" :app:assembleRelease --no-daemon
 mkdir -p release
-cp app/build/outputs/apk/release/app-release.apk "release/小星星视频-v1.2.9.apk"
-shasum -a 256 "release/小星星视频-v1.2.9.apk" | tee "release/小星星视频-v1.2.9.apk.sha256"
+cp app/build/outputs/apk/release/app-release.apk "release/小星星视频-v1.4.0.apk"
+shasum -a 256 "release/小星星视频-v1.4.0.apk" | tee "release/小星星视频-v1.4.0.apk.sha256"

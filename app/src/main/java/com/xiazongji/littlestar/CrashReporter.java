@@ -77,7 +77,7 @@ public final class CrashReporter {
                 .format(new Date());
         String report = "小星星视频崩溃日志\n"
                 + "时间: " + time + "\n"
-                + "版本: 1.2.9 (versionCode 14)\n"
+                + "版本: 1.3.0 (versionCode 15)\n"
                 + "设备: " + Build.MANUFACTURER + " " + Build.MODEL + "\n"
                 + "系统: Android " + Build.VERSION.RELEASE
                 + " (API " + Build.VERSION.SDK_INT + ")\n"

@@ -12,4 +12,17 @@
     <color name="muted_dark">#FF6D7484</color>
     <color name="neon_cyan">#FF25F4EE</color>
     <color name="transparent">#00000000</color>
+    <color name="search_bg">#FFFFFFFF</color>
+    <color name="search_surface">#FFF3F3F5</color>
+    <color name="search_text">#FF111111</color>
+    <color name="search_muted">#FF8A8A8E</color>
+    <color name="search_divider">#FFEAEAEA</color>
+    <color name="search_pink">#FFF02B55</color>
+    <color name="search_yellow">#FFFFC43D</color>
+    <color name="splash_bg">#FF191921</color>
+    <color name="feed_nav_bg">#FF08090D</color>
+    <color name="grid_text">#FF161823</color>
+    <color name="grid_muted">#FF8A8A93</color>
+    <color name="feed_pink">#FFFE2C55</color>
+    <color name="hot_pinned_bg">#FFF1F5FF</color>
 </resources>

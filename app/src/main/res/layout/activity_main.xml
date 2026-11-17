@@ -88,134 +88,375 @@
     <View
         android:id="@+id/topScrim"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:background="@drawable/bg_top_scrim" />
 
+    <!-- 推荐流顶部：菜单 + 频道 + 搜索 -->
     <LinearLayout
-        android:id="@+id/topBar"
+        android:id="@+id/feedTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="12dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="4dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_pill_dark"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="10dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="6dp">
+        <FrameLayout
+            android:id="@+id/menuButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="true"
+            android:focusable="true">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_shield" />
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/menu_desc"
+                android:src="@drawable/ic_menu" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/child_mode"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:layout_height="14dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="-2dp"
+                android:layout_marginEnd="-4dp"
+                android:background="@drawable/bg_feed_tab_badge"
+                android:gravity="center"
+                android:minWidth="14dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="13"
+                android:textColor="#FFFFFFFF"
+                android:textSize="8sp" />
+        </FrameLayout>
 
-        <View
+        <HorizontalScrollView
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/feedTabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/tabHot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_hot"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabHotLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabLive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_live"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabLiveLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_city"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabCityLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_group"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabGroupLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabFollow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_follow"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabFollowLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabShop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feed_tab_shop"
+                        android:textColor="#D9FFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabShopLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabRecommend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tabRecommendText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/feed_tab_recommend"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="15sp" />
+
+                    <View
+                        android:id="@+id/tabRecommendLine"
+                        android:layout_width="15dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="3dp"
+                        android:background="#FFFFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <ImageView
+            android:id="@+id/searchButton"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/search_button_desc"
+            android:padding="7dp"
+            android:src="@drawable/ic_search" />
+    </LinearLayout>
+
+    <!-- 从搜索进入时的顶部：返回 + 搜索框 + 搜索 -->
+    <LinearLayout
+        android:id="@+id/searchTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="6dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="7dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/searchTopBack"
+            android:layout_width="38dp"
+            android:layout_height="40dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_back_white" />
+        </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/manageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_pill_dark"
+            android:id="@+id/searchTopBox"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_pill_dark"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="10dp"
-            android:paddingTop="7dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="7dp">
+            android:paddingStart="14dp"
+            android:paddingEnd="12dp">
 
             <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:alpha="0.75"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_lock" />
+                android:src="@drawable/ic_search" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="@string/manage"
-                android:textColor="@color/white_70"
-                android:textSize="11sp" />
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/search_hint"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/searchTopAction"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="2dp"
+            android:text="@string/search_action"
+            android:textColor="#FFFFFFFF"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <View
         android:id="@+id/bottomScrim"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="260dp"
         android:layout_gravity="bottom"
         android:background="@drawable/bg_bottom_scrim" />
 
+    <!-- 右侧互动栏 -->
     <LinearLayout
         android:id="@+id/sideRail"
-        android:layout_width="64dp"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="92dp"
+        android:layout_marginEnd="2dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <FrameLayout
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_avatar_ring">
 
             <ImageView
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_avatar_inner"
                 android:contentDescription="@string/avatar_desc"
-                android:padding="7dp"
+                android:padding="6dp"
                 android:src="@drawable/ic_baby" />
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
                 android:layout_gravity="bottom|end"
                 android:background="@drawable/bg_plus_badge"
                 android:contentDescription="@null"
-                android:padding="3dp"
+                android:padding="3.5dp"
                 android:src="@drawable/ic_plus" />
         </FrameLayout>
 
         <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:layout_marginTop="22dp"
-            android:contentDescription="@string/decorative"
+            android:id="@+id/likeButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/like"
             android:src="@drawable/ic_heart" />
 
         <TextView
+            android:id="@+id/likeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:fontFamily="sans-serif-medium"
             android:shadowColor="#99000000"
             android:shadowDy="1"
@@ -227,13 +468,14 @@
         <ImageView
             android:layout_width="31dp"
             android:layout_height="31dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/decorative"
             android:src="@drawable/ic_comment" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:fontFamily="sans-serif-medium"
             android:shadowColor="#99000000"
             android:shadowDy="1"
@@ -243,15 +485,37 @@
             android:textSize="11sp" />
 
         <ImageView
+            android:id="@+id/starButton"
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/collect"
+            android:src="@drawable/ic_star" />
+
+        <TextView
+            android:id="@+id/favoriteCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-medium"
+            android:shadowColor="#99000000"
+            android:shadowDy="1"
+            android:shadowRadius="4"
+            android:text="@string/favorite_count"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/decorative"
             android:src="@drawable/ic_share" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:fontFamily="sans-serif-medium"
             android:shadowColor="#99000000"
             android:shadowDy="1"
@@ -261,147 +525,411 @@
             android:textSize="11sp" />
 
         <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="20dp">
+            android:id="@+id/discButton"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="18dp">
 
             <ImageView
                 android:id="@+id/disc"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:contentDescription="@string/disc_desc"
                 android:src="@drawable/ic_disc" />
         </FrameLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/bottomInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginEnd="80dp"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="6dp"
-        android:paddingBottom="26dp">
 
         <TextView
+            android:id="@+id/discLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:shadowColor="#B3000000"
-            android:shadowDy="1"
-            android:shadowRadius="5"
-            android:text="@string/feed_handle"
-            android:textColor="@color/white"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/captionTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:ellipsize="end"
-            android:lineSpacingExtra="3dp"
-            android:maxLines="2"
-            android:shadowColor="#B3000000"
-            android:shadowDy="1"
-            android:shadowRadius="5"
-            android:text="@string/feed_default_caption"
-            android:textColor="@color/white_90"
-            android:textSize="14sp" />
+            android:layout_marginTop="3dp"
+            android:text="@string/disc_label"
+            android:textColor="#E6FFFFFF"
+            android:textSize="9sp" />
 
         <LinearLayout
+            android:id="@+id/listenPill"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_pill_dark"
+            android:layout_height="28dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_search_pill_dark"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="9dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="5dp">
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:visibility="gone">
 
             <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_star" />
+                android:src="@drawable/ic_headphones" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="家长精选 · 本地视频"
-                android:textColor="@color/white_70"
+                android:layout_marginStart="4dp"
+                android:singleLine="true"
+                android:text="@string/listen_douyin"
+                android:textColor="#FFFFFFFF"
                 android:textSize="10sp" />
         </LinearLayout>
+    </LinearLayout>
+
+    <!-- 底部文案 + 全屏按钮 -->
+    <LinearLayout
+        android:id="@+id/bottomStack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:id="@+id/fullscreenPill"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_fullscreen_pill"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="13dp"
+            android:paddingEnd="14dp">
 
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_music_note" />
+                android:src="@drawable/ic_fullscreen" />
+
+            <TextView
+                android:id="@+id/fullscreenLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@string/fullscreen_watch"
+                android:textColor="#FFFFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="76dp"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="4dp">
+
+            <TextView
+                android:id="@+id/authorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:shadowColor="#B3000000"
+                android:shadowDy="1"
+                android:shadowRadius="5"
+                android:text="@string/feed_handle"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/captionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:ellipsize="end"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="2"
+                android:shadowColor="#B3000000"
+                android:shadowDy="1"
+                android:shadowRadius="5"
+                android:text="@string/feed_default_caption"
+                android:textColor="@color/white_90"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/musicRow"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_music_pill"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingEnd="11dp">
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_music_note" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/music_action"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="›"
+                    android:textColor="#8CFFFFFF"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/musicText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/feed_music"
+                    android:textColor="#D9FFFFFF"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 推荐流底部导航 -->
+    <LinearLayout
+        android:id="@+id/bottomTabBar"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_feed_nav_bar"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_home" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:shadowColor="#99000000"
-                android:shadowDy="1"
-                android:shadowRadius="4"
-                android:singleLine="true"
-                android:text="@string/feed_music"
-                android:textColor="@color/white_70"
-                android:textSize="11sp" />
+                android:layout_marginTop="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/nav_home"
+                android:textColor="#FFFFFFFF"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navFriends"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_friends" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_friends"
+                android:textColor="#8CFFFFFF"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/navCreate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="29dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/bg_nav_plus"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_plus" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/navMessages"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_message" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_messages"
+                android:textColor="#8CFFFFFF"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navMe"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_profile" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_me"
+                android:textColor="#8CFFFFFF"
+                android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
 
+    <!-- 搜索进入时的底部：合集 + 评论框 -->
     <LinearLayout
-        android:id="@+id/swipeHint"
-        android:layout_width="wrap_content"
+        android:id="@+id/searchBottomBars"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="170dp"
-        android:background="@drawable/bg_hint"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="13dp"
-        android:paddingTop="7dp"
-        android:paddingEnd="14dp"
-        android:paddingBottom="7dp">
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_chevron_up" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#1AFFFFFF" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="@string/swipe_hint"
-            android:textColor="@color/white_90"
-            android:textSize="12sp" />
+        <LinearLayout
+            android:id="@+id/collectionBar"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:background="@drawable/bg_collection_bar"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/collection_title"
+                android:textColor="#FFFFFFFF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/collection_name"
+                android:textColor="#B3FFFFFF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/collectionNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next_episode"
+                android:textColor="#E6FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/commentBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_feed_nav_bar"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:id="@+id/commentHint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/comment_hint"
+                android:textColor="#8CFFFFFF"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/decorative"
+                android:src="@drawable/ic_image_small" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@"
+                android:textColor="#FFFFFFFF"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/decorative"
+                android:src="@drawable/ic_emoji" />
+        </LinearLayout>
     </LinearLayout>
+
     <FrameLayout
         android:id="@+id/progressPanel"
         android:layout_width="match_parent"
         android:layout_height="22dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="4dp"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:focusable="true"
@@ -456,9 +984,9 @@
             android:textSize="16sp" />
 
         <TextView
+            android:id="@+id/restMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/restMessage"
             android:layout_marginTop="7dp"
             android:text="@string/rest_message"
             android:textColor="@color/white_70"

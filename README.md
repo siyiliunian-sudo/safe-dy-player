@@ -6,12 +6,15 @@
 
 ## 功能
 
-- 抖音式竖屏上下滑切换，向上/向下方向有对应滑动动画
+- 2 秒品牌启动页（抖音式暗色启动画面）
+- 抖音式竖屏上下滑切换：顶部频道、右侧互动栏、底部导航、全屏观看按钮
 - 视频播放完自动切换到下一个，片单循环
 - 每次重新启动随机选择一个视频开始（尽量不和上次重复）
+- 顶部频道栏 + 搜索入口 → 搜索页（搜索历史、热搜榜）→ 本机视频两列宫格；点击任意视频直接播放
+- 播放页心形/星标可切换颜色，仅本地假互动
 - 本地相册 / 文件导入 MP4，复制到 App 私有目录
 - 片单管理：缩略图、时长、移除、播放顺序
-- 右侧点赞、评论、分享、唱片等按钮仅装饰
+- 评论、分享、唱片等按钮仅装饰；心形和星标可本地切换颜色
 - 轻点显示底部细进度条，单点暂停/继续，双击暂停
 - 可选铺满全屏，或保留完整画面
 - 4 款可切换桌面图标
@@ -26,14 +29,24 @@
 - Gradle + Android Gradle Plugin
 - minSdk 23 / targetSdk 35
 
+## 搜索与宫格
+
+搜索框输入任何内容，点击“搜索”都会进入本机视频宫格。宫格显示全部已添加视频，支持两列滚动和“全部/收藏”筛选；点击卡片会回到播放页并从该视频开始。
+
 ## 目录
 
 ```text
 app/
   src/main/
     java/com/xiazongji/littlestar/
+      SplashActivity.java        2 秒品牌启动页
       MainActivity.java          播放页
       ManageActivity.java        片单管理
+      SearchActivity.java        搜索页
+      VideoGridActivity.java     两列视频宫格
+      VideoGridAdapter.java      宫格卡片适配器
+      ReactionStore.java         本地点赞/收藏状态
+      SearchHistoryStore.java    本地搜索历史
       VideoPagerAdapter.java     滑动分页与播放器
       VideoStore.java            导入、复制、缩略图、删除
       VideoItem.java             视频数据模型
