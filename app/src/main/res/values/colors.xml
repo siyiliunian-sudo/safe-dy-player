@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF05060A</color>
+    <color name="bg">#FF0B0D12</color>
+    <color name="bg_soft">#FF11141C</color>
+    <color name="card">#FF171B24</color>
+    <color name="line">#1FFFFFFF</color>
+    <color name="white">#FFF8F9FC</color>
+    <color name="white_90">#E6FFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="muted">#FF9AA2B1</color>
+    <color name="muted_dark">#FF6D7484</color>
+    <color name="neon_cyan">#FF25F4EE</color>
+    <color name="transparent">#00000000</color>
+</resources>

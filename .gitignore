@@ -1,0 +1,27 @@
+# Android build output
+.gradle/
+build/
+app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local SDK path and machine-specific settings
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# Signing secrets
+keystore.properties
+keystore/
+*.jks
+*.keystore
+
+# Local toolchain, test videos, screenshots/logs
+.tools/
+*.apk
+*.aab
+*.apk.sha256
+*.log
+release/
